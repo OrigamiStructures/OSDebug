@@ -8,22 +8,22 @@
 
 if (!function_exists('osd')) {
     function osd($var = NULL, $label = NULL, $stacktrace = FALSE) {
-        return OSDebug::osDebug($var, $label, $stacktrace);
+        echo OSDebug::osd($var, $label, $stacktrace);
     }
 }
 
 if (!function_exists('osdLog')) {
     function osdLog($var, $title, $stacktrace = FALSE, $message = FALSE) {
-        return OSDebug::osLog($var, $title, $stacktrace = FALSE, $message = FALSE);
+        echo OSDebug::osLog($var, $title, $stacktrace = FALSE, $message = FALSE);
     }
 }
 
 class OSDebug{
-    public static function osDebug($var = NULL, $label = NULL, $stacktrace = FALSE) {
+    public static function osd($var = NULL, $label = NULL, $stacktrace = FALSE) {
         return "Hey, I'm osDebug";
     }
     
-    public static function odLog($var, $title, $stacktrace = FALSE, $message = FALSE) {
+    public static function osLog($var, $title, $stacktrace = FALSE, $message = FALSE) {
         return "Hey, I'm osLog";
     }
 }
