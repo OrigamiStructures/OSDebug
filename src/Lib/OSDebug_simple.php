@@ -1,10 +1,11 @@
 <?php
 
-/* 
+/*
  * PHP Debugger function
- * for cakePHP systems
+ * for simple PHP systems
  * Copyright 2015 Origami Structures
  */
+
 
 if (!function_exists('osd')) {
     function osd($var = NULL, $label = NULL, $stacktrace = FALSE) {

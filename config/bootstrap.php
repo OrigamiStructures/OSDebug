@@ -24,4 +24,8 @@ if(!defined('ROOT')){
     $root = explode(DS, $_SERVER['REQUEST_URI']);
     define('ROOT', $_SERVER['DOCUMENT_ROOT'].DS.$root[1]);
 }
-require ROOT.DS.'plugins'.DS.'OSDebug'.DS.'src'.DS.'Lib'.DS.'OSDebug.php';
+if(class_exists('Cake\Core\App')){
+    require ROOT.DS.'plugins'.DS.'OSDebug'.DS.'src'.DS.'Lib'.DS.'OSDebug.php';
+} else {
+    require ROOT.DS.'plugins'.DS.'OSDebug'.DS.'src'.DS.'Lib'.DS.'OSDebug_simple.php';
+}
