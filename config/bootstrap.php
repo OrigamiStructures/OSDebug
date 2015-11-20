@@ -21,7 +21,7 @@ if(!defined('DS')){
     define('DS', DIRECTORY_SEPARATOR);
 }
 if(!defined('ROOT')){
-    define('ROOT', $_SERVER['DOCUMENT_ROOT']);
+    $root = explode(DS, $_SERVER['REQUEST_URI']);
+    define('ROOT', $_SERVER['DOCUMENT_ROOT'].DS.$root[1]);
 }
-
-require ROOT . DS.'plugins'.DS.'OSDebug'.DS.'src'.DS.'Lib'.DS.'OSDebug.php';
+require ROOT.DS.'plugins'.DS.'OSDebug'.DS.'src'.DS.'Lib'.DS.'OSDebug.php';
