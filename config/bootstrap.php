@@ -17,11 +17,11 @@
  * not use this bootstrap at all.
  *  
  */
-//if(!defined(DS)){
-//    define('DS', DIRECTORY_SEPARATOR);
-//}
-//if(!defined(ROOT)){
-//    define('ROOT', $_SERVER['DOCUMENT_ROOT']);
-//}
+if(!defined('DS')){
+    define('DS', DIRECTORY_SEPARATOR);
+}
+if(!defined('ROOT')){
+    define('ROOT', $_SERVER['DOCUMENT_ROOT']);
+}
 
 require ROOT . DS.'plugins'.DS.'OSDebug'.DS.'src'.DS.'Lib'.DS.'OSDebug.php';
