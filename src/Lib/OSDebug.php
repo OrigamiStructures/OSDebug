@@ -35,22 +35,34 @@ class OSDebug{
 		//set variables
 		$ggr = Debugger::trace();
 		$line = preg_split('/[\r*|\n*]/', $ggr);
-		$togKey = sha1($line[2]);
+		$traceKey = sha1($line[2]);
+        $debKey = uniqid();
         $location = preg_replace("/^([\w]*\\\\)+/", "", $line[2]);
         
-        $link = "onclick=\"document.getElementById('$togKey')";
-        $link .= ".style.display = (document.getElementById('$togKey').style.display == ";
-        $link .= "'none' ? '' : 'none');\"";
+        $trace_link = "onclick=\"document.getElementById('$traceKey')";
+        $trace_link .= ".style.display = (document.getElementById('$traceKey').style.display == ";
+        $trace_link .= "'none' ? '' : 'none');\"";
+        
+        $debug_link = "onclick=\"document.getElementById('$debKey')";
+        $debug_link .= ".style.display = (document.getElementById('$debKey').style.display == ";
+        $debug_link .= "'none' ? '' : 'none');\"";
+        
         $line_style = "\"font-size:70%; font-style:italic; margin-left:1em;";
         $line_style .= $stacktrace ? " cursor:pointer; text-decoration:underline;\"" : "\"";
+        
+        $button_style = "\"font-size:";
+        
+        $debug_button = "<a $debug_link class=\"showDebug\">  Show  </a>";
 
 		echo "<div class=\"cake-debug-output\">";
 		if ($label) {
-			echo "<h3 class=\"cake-debug\">$label"
-                    . "<span $link style=$line_style><strong>$location</strong></span></h3>";
-		}
+			echo "<h3 class=\"cake-debug\"><button style=\"font-size:50%; padding:0.25rem;\">$debug_button</button>$label"
+                    . "<span $trace_link style=$line_style><strong>$location</strong></span></h3>";
+		} else {
+            echo "<h3 class=\"cake-debug\"><span $trace_link style=$line_style><strong>$location</strong></span></h3>";
+        }
 		if ($stacktrace) {
-			echo "<pre id=\"$togKey\" style=\"display:none;\">$ggr</pre>";
+			echo "<pre id=\"$traceKey\" style=\"display:none;\">$ggr</pre>";
 		}
         self::debug($var);
 		echo"</div>";
