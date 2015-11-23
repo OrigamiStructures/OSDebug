@@ -8,7 +8,7 @@
 
 
 if (!function_exists('osd')) {
-    function osd($var = NULL, $label = NULL, $stacktrace = FALSE) {
+    function osd($var, $label = NULL, $stacktrace = FALSE) {
         return OSDebug::osDebug($var, $label, $stacktrace);
     }
 }
@@ -20,7 +20,7 @@ if (!function_exists('osdLog')) {
 }
 
 class OSDebug{
-    public static function osDebug($var = NULL, $label = NULL, $stacktrace = FALSE) {
+    public static function osDebug($var, $label = NULL, $stacktrace = FALSE) {
         return "Hey, I'm osDebug";
     }
     

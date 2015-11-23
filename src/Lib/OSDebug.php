@@ -7,7 +7,7 @@
  */
 
 if (!function_exists('osd')) {
-    function osd($var = NULL, $label = NULL, $stacktrace = FALSE) {
+    function osd($var, $label = NULL, $stacktrace = FALSE) {
         $osdebug = new OSDebug;
         echo $osdebug->osd($var, $label, $stacktrace);
     }
