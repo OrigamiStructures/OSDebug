@@ -52,11 +52,12 @@ class OSDebug{
         
         $button_style = "\"font-size:";
         
-        $debug_button = "<a $debug_link class=\"showDebug\">  Show  </a>";
+        $debug_link = ''; //"<a $debug_link class=\"showDebug\">  Show  </a>";
+		$debug_button = ''; //"<button style=\"font-size:50%; padding:0.25rem;\">$debug_button</button>"
 
 		echo "<div class=\"cake-debug-output cake-debug\">";
 		if ($label) {
-			echo "<h3 class=\"cake-debug\"><button style=\"font-size:50%; padding:0.25rem;\">$debug_button</button>$label"
+			echo "<h3 class=\"cake-debug\">{$debug_button}$label"
                     . "<span $trace_link style=$line_style><strong>$location</strong></span></h3>";
 		} else {
             echo "<h3 class=\"cake-debug\"><span $trace_link style=$line_style><strong>$location</strong></span></h3>";
