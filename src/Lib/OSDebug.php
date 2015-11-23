@@ -54,7 +54,7 @@ class OSDebug{
         
         $debug_button = "<a $debug_link class=\"showDebug\">  Show  </a>";
 
-		echo "<div class=\"cake-debug-output\">";
+		echo "<div class=\"cake-debug-output cake-debug\">";
 		if ($label) {
 			echo "<h3 class=\"cake-debug\"><button style=\"font-size:50%; padding:0.25rem;\">$debug_button</button>$label"
                     . "<span $trace_link style=$line_style><strong>$location</strong></span></h3>";
