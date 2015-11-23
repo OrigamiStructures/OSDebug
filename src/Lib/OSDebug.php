@@ -31,7 +31,7 @@ class OSDebug{
         $this->view_block = new ViewBlock;
     }
     
-    public function osd($var = NULL, $label = NULL, $stacktrace = FALSE) {
+    public function osd($var, $label = NULL, $stacktrace = FALSE) {
 		//set variables
 		$ggr = Debugger::trace();
 		$line = preg_split('/[\r*|\n*]/', $ggr);
