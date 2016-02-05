@@ -19,6 +19,13 @@ if (!function_exists('osdLog')) {
     }
 }
 
+if (!function_exists('sql')) {
+    function sql($query, $label = NULL, $stacktrace = FALSE) {
+        $osdebug = new OSDebug;
+        echo $osdebug->sql($query, $label, $stacktrace);
+    }
+}
+
 use Cake\Error\Debugger;
 use Cake\Core\Configure;
 use Cake\View\ViewBlock;
@@ -135,4 +142,12 @@ TEXT;
     public static function osLog($var, $title, $stacktrace = FALSE, $message = FALSE) {
         return "Hey, I'm osLog";
     }
+	
+	public function sql($query, $label, $trace) {
+		$sql = \Cake\Utility\Text::wordWrap($query->sql(), 80);
+		$values = ['sql' => $sql, 'bindings' => $query->valueBinder()->bindings()];
+		$this->osd($values, $label, $trace);
+
+	}
+
 }
