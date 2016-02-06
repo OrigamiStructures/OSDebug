@@ -145,9 +145,19 @@ TEXT;
 	
 	public function sql($query, $label, $trace) {
 		$sql = \Cake\Utility\Text::wordWrap($query->sql(), 80);
-		$values = ['sql' => $sql, 'bindings' => $query->valueBinder()->bindings()];
+		$values = $query->valueBinder()->bindings();
+		$sql = $this->popuateSql($sql, $values);
+		
+		$values = ['sql' => $sql, 'bindings' => $values];
 		$this->osd($values, $label, $trace);
-
+	}
+	
+	public function popuateSql($sql, $values) {
+		preg_match_all('/(:c\d+)/', $sql, $match);
+		foreach ($match[0] as $identifier) {
+			$sql = str_replace($identifier, $values[$identifier]['value'], $sql);
+		}
+		return $sql;
 	}
 
 }
