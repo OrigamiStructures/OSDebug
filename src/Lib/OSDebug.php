@@ -7,14 +7,14 @@
  */
 
 if (!function_exists('osd')) {
-    function osd($var, $label = NULL, $stacktrace = FALSE) {
+    function osd($var, $label = NULL, $stacktrace = TRUE) {
         $osdebug = new OSDebug;
         echo $osdebug->osd($var, $label, $stacktrace);
     }
 }
 
 if (!function_exists('osdLog')) {
-    function osdLog($var, $title, $stacktrace = FALSE, $message = FALSE) {
+    function osdLog($var, $title, $stacktrace = TRUE, $message = FALSE) {
         echo OSDebug::osLog($var, $title, $stacktrace = FALSE, $message = FALSE);
     }
 }
@@ -38,7 +38,7 @@ class OSDebug{
         $this->view_block = new ViewBlock;
     }
     
-    public function osd($var, $label = NULL, $stacktrace = FALSE) {
+    public function osd($var, $label = NULL, $stacktrace = TRUE) {
 		//set variables
 		$ggr = Debugger::trace();
 		$line = preg_split('/[\r*|\n*]/', $ggr);
