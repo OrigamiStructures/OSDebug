@@ -13,9 +13,12 @@ if (!function_exists('osd')) {
     }
 }
 
+/**
+ *  This will log to whatever log is configure to hand level 'debug'
+ */
 if (!function_exists('osdLog')) {
     function osdLog($var, $title, $stacktrace = TRUE, $message = FALSE) {
-        echo OSDebug::osLog($var, $title, $stacktrace = FALSE, $message = FALSE);
+        echo OSDebug::osLog($var, $title, $stacktrace, $message);
     }
 }
 
@@ -29,6 +32,7 @@ if (!function_exists('sql')) {
 use Cake\Error\Debugger;
 use Cake\Core\Configure;
 use Cake\View\ViewBlock;
+use Cake\Log\Log;
 
 class OSDebug{
     
@@ -139,8 +143,26 @@ TEXT;
         printf($template, $var);
 	}
 
-    public static function osLog($var, $title, $stacktrace = FALSE, $message = FALSE) {
-        return "Hey, I'm osLog";
+	/**
+	 * Debug to a log
+	 * 
+	 * Will go to which ever log handles level = debug
+	 * 
+	 * @param type $var
+	 * @param string $title
+	 * @param type $stacktrace unused
+	 * @param string $message
+	 * @return type
+	 */
+    public static function osLog($var, $title = FALSE, $stacktrace = FALSE, $message = FALSE) {
+		$val = chr(13).chr(13) . self::_format($var) . chr(13).chr(13);
+		if ($title){
+			$title = chr(13).chr(13) . $title;
+		}
+		if ($message) {
+			$message = chr(13).chr(13) . $message;
+		}
+ 		return Log::write('debug', $title . $message . $val, ['config' => 'osd']);
     }
 	
 	public function sql($query, $label, $trace) {
@@ -159,5 +181,33 @@ TEXT;
 		}
 		return $sql;
 	}
+
+	/**
+     * Converts to string the provided data so it can be logged. The context
+     * can optionally be used by log engines to interpolate variables
+     * or add additional info to the logged message.
+     *
+     * @param mixed $data The data to be converted to string and logged.
+     * @param array $context Additional logging information for the message.
+     * @return string
+     */
+    public static function _format($data, array $context = [])
+    {
+        if (is_string($data)) {
+            return $data;
+        }
+
+        $object = is_object($data);
+
+        if ($object && method_exists($data, '__toString')) {
+            return (string)$data;
+        }
+
+        if ($object && $data instanceof JsonSerializable) {
+            return json_encode($data);
+        }
+
+        return print_r($data, true);
+    }
 
 }
