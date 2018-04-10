@@ -18,7 +18,7 @@ if (!function_exists('osd')) {
  */
 if (!function_exists('osdLog')) {
     function osdLog($var, $title, $stacktrace = TRUE, $message = FALSE) {
-        echo OSDebug::osLog($var, $title, $stacktrace, $message);
+        return OSDebug::osLog($var, $title, $stacktrace, $message);
     }
 }
 
@@ -155,6 +155,13 @@ TEXT;
 	 * @return type
 	 */
     public static function osLog($var, $title = FALSE, $stacktrace = FALSE, $message = FALSE) {
+		if($stacktrace) {
+			ob_start();
+			echo chr(13).chr(13) . Debugger::trace(['start' => 2]);
+			$trace = ob_get_contents();
+			ob_end_clean();
+		}
+
 		$val = chr(13).chr(13) . self::_format($var) . chr(13).chr(13);
 		if ($title){
 			$title = chr(13).chr(13) . $title;
@@ -162,7 +169,7 @@ TEXT;
 		if ($message) {
 			$message = chr(13).chr(13) . $message;
 		}
- 		return Log::write('debug', $title . $message . $val, ['config' => 'osd']);
+ 		return Log::write('debug', $title . $message . $trace . $val, ['config' => 'osd']);
     }
 	
 	public function sql($query, $label, $trace) {
@@ -202,6 +209,10 @@ TEXT;
         if ($object && method_exists($data, '__toString')) {
             return (string)$data;
         }
+		
+		if ($object && $data instanceof Query) {
+			return sql($data);
+		}
 
         if ($object && $data instanceof JsonSerializable) {
             return json_encode($data);
