@@ -17,7 +17,7 @@ if (!function_exists('osd')) {
  *  This will log to whatever log is configure to hand level 'debug'
  */
 if (!function_exists('osdLog')) {
-    function osdLog($var, $title, $stacktrace = TRUE, $message = FALSE) {
+    function osdLog($var, $title, $stacktrace = FALSE, $message = FALSE) {
         return OSDebug::osLog($var, $title, $stacktrace, $message);
     }
 }
@@ -160,6 +160,8 @@ TEXT;
 			echo chr(13).chr(13) . Debugger::trace(['start' => 2]);
 			$trace = ob_get_contents();
 			ob_end_clean();
+		} else {
+			$trace = '';
 		}
 
 		$val = chr(13).chr(13) . self::_format($var) . chr(13).chr(13);
