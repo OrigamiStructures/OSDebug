@@ -22,6 +22,12 @@ if (!function_exists('osdLog')) {
     }
 }
 
+if (!function_exists('osdTime')) {
+	function osdTime() {
+		return new OSDTImer();
+	}
+}
+
 if (!function_exists('sql')) {
     function sql($query, $label = NULL, $stacktrace = FALSE) {
         $osdebug = new OSDebug;
@@ -41,14 +47,14 @@ class OSDebug{
     public function __construct() {
         $this->view_block = new ViewBlock;
     }
-    
+	
     public function osd($var, $label = NULL, $stacktrace = TRUE) {
 		//set variables
-		$ggr = Debugger::trace();
+		$ggr = Debugger::trace(['start' => 2]);
 		$line = preg_split('/[\r*|\n*]/', $ggr);
-		$traceKey = sha1($line[2]);
+		$traceKey = uniqid();
         $debKey = uniqid();
-        $location = preg_replace("/^([\w]*\\\\)+/", "", $line[2]);
+        $location = $line[0];
         
         $trace_link = "onclick=\"document.getElementById('$traceKey')";
         $trace_link .= ".style.display = (document.getElementById('$traceKey').style.display == ";
@@ -66,15 +72,15 @@ class OSDebug{
         $debug_link = ''; //"<a $debug_link class=\"showDebug\">  Show  </a>";
 		$debug_button = ''; //"<button style=\"font-size:50%; padding:0.25rem;\">$debug_button</button>"
 
-		echo "<div class=\"cake-debug-output cake-debug\">";
+		echo "<div style=\"margin-left:1em; padding:.5em; border:thin gray solid; width:75%; background-color: #ffa50080; \" class=\"cake-debug-output cake-debug\">";
 		if ($label) {
-			echo "<h3 class=\"cake-debug\">{$debug_button}$label"
-                    . "<span $trace_link style=$line_style><strong>$location</strong></span></h3>";
+			echo "<h6 class=\"cake-debug\">{$debug_button}$label"
+                    . "<br><span $trace_link style=$line_style><strong>$location</strong></span></h6>";
 		} else {
-            echo "<h3 class=\"cake-debug\"><span $trace_link style=$line_style><strong>$location</strong></span></h3>";
+            echo "<h6 class=\"cake-debug\"><span $trace_link style=$line_style><strong>$location</strong></span></h6>";
         }
 		if ($stacktrace) {
-			echo "<pre id=\"$traceKey\" style=\"display:none;\">$ggr</pre>";
+			echo "<pre id=\"$traceKey\" style=\"display:none; font-size: .75em; line-height: 1; margin-bottom: 1em; \">$ggr</pre>";
 		}
         self::debug($var);
 		echo"</div>";
@@ -223,4 +229,49 @@ TEXT;
         return print_r($data, true);
     }
 
+}
+
+class OSDTImer {
+	public $start;
+	public $end;
+	
+	public function start($index = 0) {
+		$this->start[$index] = microtime();
+	}
+	
+	public function end($index = 0) {
+		$this->end[$index] = microtime();
+//		return $this->result($index);
+	}
+	
+	/**
+	 * Output the time interval
+	 * 
+	 * Providing no index will calc the default (zeroth) interval 
+	 * Providing an index will calc that recorded timer 
+	 * Providing a second (alt_end) index will calculate the time 
+	 *	between the start of the first and the end of the second.
+	 * 
+	 * @param string $index
+	 * @param string $alt_end
+	 * @return string
+	 */
+	public function result($index = 0, $alt_end = FALSE) {
+		if ($alt_end) {
+			$concat = $index . '->' . $alt_end;
+			if (isset($this->start[$index]) && isset($this->end[$alt_end])) {
+				$this->start[$concat] = $this->start[$index];
+				$this->end[$concat] = $this->end[$alt_end];
+			}
+			$index = $concat;
+		}
+		if (isset($this->start[$index]) && isset($this->end[$index])){
+			$duration = $this->end[$index] - $this->start[$index];
+			return "Timer #$index = $duration";
+		} else {
+			return "Timer #$index did not have a start and stop value";
+		}
+		
+	}
+	
 }
