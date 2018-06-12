@@ -232,8 +232,8 @@ TEXT;
 }
 
 class OSDTImer {
-	public $start;
-	public $end;
+	protected $start;
+	protected $end;
 	
 	public function start($index = 0) {
 		$this->start[$index] = microtime();
