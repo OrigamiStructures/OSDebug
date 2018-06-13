@@ -231,16 +231,24 @@ TEXT;
 
 }
 
+/**
+ * Timer class
+ * 
+ * Simplifies the process of testing time-to-process.
+ * Can handle multiple named timers and calculate between 
+ * mixes start/stops of named timers. 
+ */
+
 class OSDTImer {
-	protected $start;
-	protected $end;
+	protected $start = [];
+	protected $end = [];
 	
 	public function start($index = 0) {
-		$this->start[$index] = microtime();
+		$this->start[$index] = microtime(TRUE);
 	}
 	
 	public function end($index = 0) {
-		$this->end[$index] = microtime();
+		$this->end[$index] = microtime(TRUE);
 //		return $this->result($index);
 	}
 	
@@ -257,21 +265,64 @@ class OSDTImer {
 	 * @return string
 	 */
 	public function result($index = 0, $alt_end = FALSE) {
-		if ($alt_end) {
+		if ($alt_end !== FALSE) {
+			$this->validateEnd($alt_end);
 			$concat = $index . '->' . $alt_end;
-			if (isset($this->start[$index]) && isset($this->end[$alt_end])) {
+			if (isset($this->start[$index])) {
 				$this->start[$concat] = $this->start[$index];
 				$this->end[$concat] = $this->end[$alt_end];
 			}
 			$index = $concat;
 		}
-		if (isset($this->start[$index]) && isset($this->end[$index])){
-			$duration = $this->end[$index] - $this->start[$index];
-			return "Timer #$index = $duration";
+		if (isset($this->start[$index])){
+			$this->validateEnd($index);
 		} else {
-			return "Timer #$index did not have a start and stop value";
+			return "The index '$index' is unused. No timer result available";
 		}
-		
+		$duration = $this->end[$index] - $this->start[$index];
+		if ($duration < 1) {
+			$duration = ($duration * 1000) . ' miliseconds';
+		} else {
+			$duration .= ' seconds';
+		}
+		return "Timer #$index = $duration";		
+	}
+	
+	/**
+	 * Set an end value if it's not already
+	 * 
+	 * Insures result() before end() yields a duration 
+	 * while eliminating fussy insistance of end() 
+	 * for simple cases of on-the-fly checking.
+	 * 
+	 * @param string $index
+	 */
+	protected function validateEnd($index) {
+		if (!isset($this->end[$index])) {
+			$this->end($index);
+		}
+	}
+	
+	/**
+	 * Provides a comprensive debug report
+	 * 
+	 * Can now substitute for multiple result() calls by 
+	 * showing start, end, duration for every key that has 
+	 * a recorded end. Shows all know data in any case. 
+	 * 
+	 * @return array
+	 */
+	public function __debugInfo() {
+		$keys = array_keys($this->start);
+		foreach ($keys as $key) {
+			$end = isset($this->end[$key]) ? $this->end[$key] : FALSE;
+			$output[$key] = [
+				'start' => $this->start[$key],
+				'end' => ($end !== FALSE ? $end : '*'), 
+				'duration' => ($end !== FALSE ? $end - $this->start[$key] : '*'),
+			];
+		}
+		return $output;		
 	}
 	
 }
