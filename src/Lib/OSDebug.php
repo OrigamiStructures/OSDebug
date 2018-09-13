@@ -49,6 +49,9 @@ class OSDebug{
     }
 	
     public function osd($var, $label = NULL, $stacktrace = TRUE) {
+        if (!Configure::read('debug')) {
+			return;
+		}
 		//set variables
 		$ggr = Debugger::trace(['start' => 2]);
 		$line = preg_split('/[\r*|\n*]/', $ggr);
@@ -181,6 +184,9 @@ TEXT;
     }
 	
 	public function sql($query, $label, $trace) {
+        if (!Configure::read('debug')) {
+			return;
+		}
 		$sql = \Cake\Utility\Text::wordWrap($query->sql(), 80);
 		$values = $query->valueBinder()->bindings();
 		$sql = $this->popuateSql($sql, $values);
@@ -265,6 +271,9 @@ class OSDTImer {
 	 * @return string
 	 */
 	public function result($index = 0, $alt_end = FALSE) {
+        if (!Configure::read('debug')) {
+			return;
+		}
 		if ($alt_end !== FALSE) {
 			$this->validateEnd($alt_end);
 			$concat = $index . '->' . $alt_end;
