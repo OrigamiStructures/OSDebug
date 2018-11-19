@@ -255,7 +255,6 @@ class OSDTImer {
 	
 	public function end($index = 0) {
 		$this->end[$index] = microtime(TRUE);
-//		return $this->result($index);
 	}
 	
 	/**
@@ -274,6 +273,23 @@ class OSDTImer {
         if (!Configure::read('debug')) {
 			return;
 		}
+		$duration = $this->interval($index, $alt_end);
+		if ($duration < 1) {
+			$duration = ($duration * 1000) . ' miliseconds';
+		} else {
+			$duration .= ' seconds';
+		}
+		return "Timer #$index = $duration";		
+	}
+	
+	/**
+	 * Get the interval between to time markers as a float
+	 * 
+	 * @param string $index
+	 * @param string $alt_end
+	 * @return float
+	 */
+	public function interval($index = 0, $alt_end = FALSE) {
 		if ($alt_end !== FALSE) {
 			$this->validateEnd($alt_end);
 			$concat = $index . '->' . $alt_end;
@@ -288,13 +304,7 @@ class OSDTImer {
 		} else {
 			return "The index '$index' is unused. No timer result available";
 		}
-		$duration = $this->end[$index] - $this->start[$index];
-		if ($duration < 1) {
-			$duration = ($duration * 1000) . ' miliseconds';
-		} else {
-			$duration .= ' seconds';
-		}
-		return "Timer #$index = $duration";		
+		return $this->end[$index] - $this->start[$index];
 	}
 	
 	/**
@@ -310,6 +320,17 @@ class OSDTImer {
 		if (!isset($this->end[$index])) {
 			$this->end($index);
 		}
+	}
+	
+	/**
+	 * clear all the timers
+	 */
+	public function reset() {
+		$this->start = $this->end = [];
+	}
+	
+	public function hasIndex($index) {
+		return in_array($index, array_keys($this->start));
 	}
 	
 	/**
