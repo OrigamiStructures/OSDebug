@@ -251,10 +251,12 @@ class OSDTImer {
 	
 	public function start($index = 0) {
 		$this->start[$index] = microtime(TRUE);
+		return $this->start[$index];
 	}
 	
 	public function end($index = 0) {
 		$this->end[$index] = microtime(TRUE);
+		return $this->end[$index];
 	}
 	
 	/**
