@@ -28,6 +28,13 @@ if (!function_exists('osdTime')) {
 	}
 }
 
+if (!function_exists('whois')) {
+	function whois($obj) {
+        $osdebug = new OSDebug;
+        echo $osdebug->whois($obj);
+	}
+}
+
 if (!function_exists('sql')) {
     function sql($query, $label = NULL, $stacktrace = FALSE) {
         $osdebug = new OSDebug;
@@ -75,7 +82,7 @@ class OSDebug{
         $debug_link = ''; //"<a $debug_link class=\"showDebug\">  Show  </a>";
 		$debug_button = ''; //"<button style=\"font-size:50%; padding:0.25rem;\">$debug_button</button>"
 
-		echo "<div style=\"margin-left:1em; padding:.5em; border:thin gray solid; width:75%; background-color: #ffa50080; \" class=\"cake-debug-output cake-debug\">";
+		echo $this->debugDiv('open');
 		if ($label) {
 			echo "<h6 class=\"cake-debug\">{$debug_button}$label"
                     . "<br><span $trace_link style=$line_style><strong>$location</strong></span></h6>";
@@ -86,8 +93,16 @@ class OSDebug{
 			echo "<pre id=\"$traceKey\" style=\"display:none; font-size: .75em; line-height: 1; margin-bottom: 1em; \">$ggr</pre>";
 		}
         self::debug($var);
-		echo"</div>";
+		echo $this->debugDiv('close');
     }
+	
+	private function debugDiv($mode = 'open') {
+		if (strtoupper($mode) === 'OPEN') {
+			return "<div style=\"margin-left:1em; padding:.5em; border:thin gray solid; width:75%; background-color: #ffa50080; \" class=\"cake-debug-output cake-debug\">";
+		} else {
+			return "</div>";
+		}
+	}
     
     /**
      * Prints out debug information about given variable.
@@ -201,6 +216,15 @@ TEXT;
 			$sql = str_replace($identifier, $values[$identifier]['value'], $sql);
 		}
 		return $sql;
+	}
+	
+	public function whois($obj) {
+		list($namespace, $class) = namespaceSplit(get_class($obj));
+//		$class = namespaceSplit(get_class($obj));
+		$hash = spl_object_hash($obj);
+		echo $this->debugDiv('open');
+		echo "<p>$class - $hash ($namespace)</p>";
+		echo $this->debugDiv('close');
 	}
 
 	/**
