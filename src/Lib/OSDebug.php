@@ -29,9 +29,9 @@ if (!function_exists('osdTime')) {
 }
 
 if (!function_exists('whois')) {
-	function whois($obj) {
+	function whois($obj, $label = null) {
         $osdebug = new OSDebug;
-        echo $osdebug->whois($obj);
+        echo $osdebug->whois($obj, $label);
 	}
 }
 
@@ -207,35 +207,13 @@ TEXT;
 		return $sql;
 	}
 	
-	public function whois($obj) {
-        if (!Configure::read('debug')) {
-			return;
-		}
-		//set variables
-		$ggr = Debugger::trace(['start' => 2]);
-		$line = preg_split('/[\r*|\n*]/', $ggr);
-		$traceKey = uniqid();
-        $location = $line[0];
-        
-        $trace_link = "onclick=\"document.getElementById('$traceKey')";
-        $trace_link .= ".style.display = (document.getElementById('$traceKey').style.display == ";
-        $trace_link .= "'none' ? '' : 'none');\"";
-        
-        $line_style = "\"font-size:70%; font-weight:normal; margin-left:1em; "
-				. "cursor:pointer; text-decoration:underline;\"";
+	public function whois($obj, $label = null) {
                 
 		list($namespace, $class) = namespaceSplit(get_class($obj));
 		$hash = spl_object_hash($obj);
-		$label = "<p>$class - $hash ($namespace)</p>";
-
-		echo $this->debugDiv('open');
-		echo "<h6 class=\"cake-debug\"><span style=\"font-size: 125%;\">$label</span>"
-					. "<span $trace_link style=$line_style>"
-					. "<strong>$location</strong></span></h6>";
-		echo "<pre id=\"$traceKey\" "
-					. "style=\"display:none; font-size: .75em; "
-					. "line-height: 1; margin-bottom: 1em; \">$ggr</pre>";
-		echo $this->debugDiv('close');
+		$var = "$class - $hash ($namespace)";
+		
+		$this->osd($var, $label);
 
 	}
 
