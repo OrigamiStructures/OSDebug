@@ -55,7 +55,7 @@ class OSDebug{
         $this->view_block = new ViewBlock;
     }
 	
-    public function osd($var, $label = NULL, $stacktrace = TRUE) {
+    public function osd($var, $label = NULL) {
         if (!Configure::read('debug')) {
 			return;
 		}
@@ -63,39 +63,28 @@ class OSDebug{
 		$ggr = Debugger::trace(['start' => 2]);
 		$line = preg_split('/[\r*|\n*]/', $ggr);
 		$traceKey = uniqid();
-        $debKey = uniqid();
         $location = $line[0];
         
         $trace_link = "onclick=\"document.getElementById('$traceKey')";
         $trace_link .= ".style.display = (document.getElementById('$traceKey').style.display == ";
         $trace_link .= "'none' ? '' : 'none');\"";
         
-        $debug_link = "onclick=\"document.getElementById('$debKey')";
-        $debug_link .= ".style.display = (document.getElementById('$debKey').style.display == ";
-        $debug_link .= "'none' ? '' : 'none');\"";
-        
-        $line_style = "\"font-size:70%; font-style:italic; margin-left:1em;";
-        $line_style .= $stacktrace ? " cursor:pointer; text-decoration:underline;\"" : "\"";
-        
-        $button_style = "\"font-size:";
-        
-        $debug_link = ''; //"<a $debug_link class=\"showDebug\">  Show  </a>";
-		$debug_button = ''; //"<button style=\"font-size:50%; padding:0.25rem;\">$debug_button</button>"
+        $line_style = "\"font-size:70%; font-style:normal; margin-left:1em; "
+				. "cursor:pointer; text-decoration:underline;\"";
+                
+		$label = is_null($label) ? '' : "<p>$label</p>";
 
 		echo $this->debugDiv('open');
-		if ($label) {
-			echo "<h6 class=\"cake-debug\">{$debug_button}$label"
-                    . "<br><span $trace_link style=$line_style><strong>$location</strong></span></h6>";
-		} else {
-            echo "<h6 class=\"cake-debug\"><span $trace_link style=$line_style><strong>$location</strong></span></h6>";
-        }
-		if ($stacktrace) {
-			echo "<pre id=\"$traceKey\" style=\"display:none; font-size: .75em; line-height: 1; margin-bottom: 1em; \">$ggr</pre>";
-		}
+		echo "<h6 class=\"cake-debug\"><span style=\"font-size: 125%;\">$label</span>"
+					. "<span $trace_link style=$line_style>"
+					. "<strong>$location</strong></span></h6>";
+		echo "<pre id=\"$traceKey\" "
+					. "style=\"display:none; font-size: .75em; "
+					. "line-height: 1; margin-bottom: 1em; \">$ggr</pre>";
         self::debug($var);
 		echo $this->debugDiv('close');
     }
-	
+		
 	private function debugDiv($mode = 'open') {
 		if (strtoupper($mode) === 'OPEN') {
 			return "<div style=\"margin-left:1em; padding:.5em; border:thin gray solid; width:75%; background-color: #ffa50080; \" class=\"cake-debug-output cake-debug\">";
@@ -219,12 +208,35 @@ TEXT;
 	}
 	
 	public function whois($obj) {
+        if (!Configure::read('debug')) {
+			return;
+		}
+		//set variables
+		$ggr = Debugger::trace(['start' => 2]);
+		$line = preg_split('/[\r*|\n*]/', $ggr);
+		$traceKey = uniqid();
+        $location = $line[0];
+        
+        $trace_link = "onclick=\"document.getElementById('$traceKey')";
+        $trace_link .= ".style.display = (document.getElementById('$traceKey').style.display == ";
+        $trace_link .= "'none' ? '' : 'none');\"";
+        
+        $line_style = "\"font-size:70%; font-weight:normal; margin-left:1em; "
+				. "cursor:pointer; text-decoration:underline;\"";
+                
 		list($namespace, $class) = namespaceSplit(get_class($obj));
-//		$class = namespaceSplit(get_class($obj));
 		$hash = spl_object_hash($obj);
+		$label = "<p>$class - $hash ($namespace)</p>";
+
 		echo $this->debugDiv('open');
-		echo "<p>$class - $hash ($namespace)</p>";
+		echo "<h6 class=\"cake-debug\"><span style=\"font-size: 125%;\">$label</span>"
+					. "<span $trace_link style=$line_style>"
+					. "<strong>$location</strong></span></h6>";
+		echo "<pre id=\"$traceKey\" "
+					. "style=\"display:none; font-size: .75em; "
+					. "line-height: 1; margin-bottom: 1em; \">$ggr</pre>";
 		echo $this->debugDiv('close');
+
 	}
 
 	/**
